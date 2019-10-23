@@ -3,36 +3,20 @@ package webserver
 import (
 	"bytes"
 	"encoding/json"
-	"io"
-
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"io"
+	"net/http"
 )
 
-// func downloadFile(myBucket, myString, filename string) string {
-// 	// The session the S3 Downloader will use
-// 	sess := session.Must(session.NewSession())
+type Input struct {
+	Bucket string `json:"bucket"`
+	Key    string `json:"key"`
+}
 
-// 	// Create a downloader with the session and default options
-// 	downloader := s3manager.NewDownloader(sess)
-
-// 	// Create a file to write the S3 Object contents to.
-// 	f, err := os.Create(filename)
-// 	if err != nil {
-// 		return fmt.Errorf("failed to create file %q, %v", filename, err)
-// 	}
-
-// 	// Write the contents of S3 Object to the file
-// 	n, err := downloader.Download(f, &s3.GetObjectInput{
-// 		Bucket: aws.String(myBucket),
-// 		Key:    aws.String(myString),
-// 	})
-// 	if err != nil {
-// 		return fmt.Errorf("failed to download file, %v", err)
-// 	}
-// 	fmt.Printf("file downloaded, %d bytes\n", n)
-// }
+const S3_REGION = "eu-west-1"
 
 type S3Handler struct {
 	Session *session.Session
@@ -63,4 +47,46 @@ func extractMovieData(byteData []byte) ([]*Movie, error) {
 		return nil, err
 	}
 	return moviesData, nil
+}
+
+func GetS3File(w http.ResponseWriter, r *http.Request) {
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(S3_REGION)})
+	if err != nil {
+		// Handle error
+	}
+	w.Header().Set("Content-Type", "application/json")
+	var input Input
+	_ = json.NewDecoder(r.Body).Decode(&input)
+
+	fmt.Printf("Getting: %s/%s \n", input.Bucket, input.Key)
+
+	handler := S3Handler{
+		Session: sess,
+		Bucket:  input.Bucket,
+	}
+	fileString := input.Key // "movies.json"
+	contents, err := handler.ReadFile(fileString)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// toJson, error := extractMovieData(contents)
+	// if err != nil {
+	// 	fmt.Println(error)
+	// }
+	// for _, p := range toJson {
+	// 	log.Printf("Name: %s , adsense: %s \n", p.Title, p.Rating)
+	// }
+
+	// fmt.Fprintf(w, contents)
+	// var openReplacement interface{}
+	// err := json.Marshal(contents, &openReplacement)
+	var jsons interface{}
+	error := json.Unmarshal(contents, &jsons)
+	if error != nil {
+		fmt.Println(err)
+	}
+	json.NewEncoder(w).Encode(jsons)
+	// return contents
+
 }
