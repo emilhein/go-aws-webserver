@@ -40,7 +40,6 @@ func computeTotal(a int, b int) (int, string, error) {
 	fmt.Printf("The random number is :- %v \n", randomN)
 	if randomN >= 5 {
 		return a + b, "Everything ok we have a high number ", nil
-	} else {
-		return a + b, "Everything bad ", errors.New("We dont work with small numbers")
 	}
+	return a + b, "Everything bad ", errors.New("We dont work with small numbers")
 }
