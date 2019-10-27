@@ -3,6 +3,8 @@ github.com/aws/aws-sdk-go v1.25.17/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpi
 github.com/emilhein/go-aws-utility v1.0.0 h1:kPicVoUi96LzARmFFmBFRyGxrW31+zHwaKt9R9wiXUI=
 github.com/emilhein/go-aws-utility v1.0.2 h1:jK5pbIyB1pU6Obm3/668YueezblakXJozBM/4yNCNz4=
 github.com/emilhein/go-aws-utility v1.0.2/go.mod h1:tgAvGPmjaeB5GuOKhzmRR8CaIIFCtwAX9F+AjB5WyQM=
+github.com/emilhein/go-aws-utility v1.1.0 h1:PIwW1s+shIf6k+K6307o+KgRxRo9aVlP038FPT+slQ0=
+github.com/emilhein/go-aws-utility v1.1.0/go.mod h1:tgAvGPmjaeB5GuOKhzmRR8CaIIFCtwAX9F+AjB5WyQM=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af h1:pmfjZENx5imkbgOkpRUYLnmbU7UEFbjtDA2hxJ1ichM=
