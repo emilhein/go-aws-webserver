@@ -6,6 +6,8 @@ A small webserver written in Go, to perform simple tasks on your AWS ressources
 
 ### How to use
 
+NOTE: Remeber to set aws credentials when you deploy this server
+
 Make sure you have AWS credentials available on your computer:
 
 Windows: C:\Users\{USERNAME}\.aws\credentials
