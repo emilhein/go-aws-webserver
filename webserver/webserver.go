@@ -80,10 +80,7 @@ func handleMessages() {
 
 func Start() {
 	r := mux.NewRouter()
-	port := os.Getenv("PORT")
-	if port == "" {
-		log.Fatal("$PORT must be set")
-	}
+
 	r.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
@@ -92,10 +89,19 @@ func Start() {
 	r.HandleFunc("/interfaces", InterfaceMethod)
 	r.HandleFunc("/startmining", StartMining)
 	fmt.Printf("Server started on port :%v \n", port)
-	portString := fmt.Sprintf(":%v", port)
-	err := http.ListenAndServe(portString, r)
+	err := http.ListenAndServe(GetPort(), r)
 	if err != nil {
 		fmt.Printf("Could not start the server: %v", err)
 	}
 
+}
+
+func GetPort() string {
+	var port = os.Getenv("PORT")
+	// Set a default port if there is nothing in the environment
+	if port == "" {
+		port = "4747"
+		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+	}
+	return ":" + port
 }
