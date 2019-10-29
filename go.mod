@@ -1,4 +1,4 @@
-module github.com/emilhein/go-aws-webserver
+module github.com/go-aws-webserver
 
 go 1.13
 

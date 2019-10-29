@@ -1,1 +1,1 @@
-web: bin/go-webserver
+web: go-webserver
