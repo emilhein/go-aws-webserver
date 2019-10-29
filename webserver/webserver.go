@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -77,11 +78,12 @@ func handleMessages() {
 	}
 }
 
-const portNumber = 3001
-
 func Start() {
 	r := mux.NewRouter()
-
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
 	r.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
@@ -89,8 +91,9 @@ func Start() {
 	r.HandleFunc("/getS3files", GetS3Files).Methods("POST")
 	r.HandleFunc("/interfaces", InterfaceMethod)
 	r.HandleFunc("/startmining", StartMining)
-	fmt.Printf("Server started on port :%v \n", portNumber)
-	err := http.ListenAndServe(":3001", r)
+	fmt.Printf("Server started on port :%v \n", port)
+	portString := fmt.Sprintf(":%v", port)
+	err := http.ListenAndServe(portString, r)
 	if err != nil {
 		fmt.Printf("Could not start the server: %v", err)
 	}
