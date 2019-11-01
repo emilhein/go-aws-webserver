@@ -72,7 +72,7 @@ func StartMining(w http.ResponseWriter, r *http.Request) {
 	go breaker(oreChannel, minedOreChan)
 
 	// Smelters
-	go smelter(minedOreChan, shippingChannel, "Bob")
+	go smelter(minedOreChan, shippingChannel, "Peter")
 
 	// wg.Wait()
 	// Packer
