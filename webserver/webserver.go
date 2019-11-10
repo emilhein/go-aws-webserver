@@ -88,6 +88,7 @@ func Start() {
 	r.HandleFunc("/getS3files", GetS3Files).Methods("POST")
 	r.HandleFunc("/interfaces", InterfaceMethod)
 	r.HandleFunc("/startmining", StartMining)
+	r.HandleFunc("/startNat", NATStart)
 	fmt.Printf("Server started.... \n")
 	err := http.ListenAndServe(GetPort(), r)
 	if err != nil {
