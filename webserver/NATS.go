@@ -2,54 +2,44 @@ package webserver
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 
-	"github.com/nats-io/stan.go"
+	"github.com/nats-io/nats.go"
 )
 
 func NATStart(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("YOLO")
-	sc, err := stan.Connect("nats://demo.nats.io:4222", "Test")
+	// sc, err := stan.Connect(
+	// 	nats.DefaultURL
+	// 	"test-cluster",
+	// 	"client-1",
+	// 	stan.Pings(1, 3),
+	// stan.NatsURL(strings.Join(os.Args[1:], ",")),
+	// )
+	nc, err := nats.Connect(nats.DefaultURL)
 	if err != nil {
-		fmt.Print(err)
-
+		log.Fatalln(err)
 	}
-	// Simple Synchronous Publisher
-	sc.Publish("updates", []byte("Hello World")) // does not return until an ack has been received from NATS Streaming
 
-	// Simple Async Subscriber
-	sub, _ := sc.Subscribe("updates", func(m *stan.Msg) {
-		fmt.Printf("Received a message: %s\n", string(m.Data))
+	c, _ := nats.NewEncodedConn(nc, "json")
+
+	defer c.Close()
+
+	sub, err := c.Subscribe("movies", func(m *Movie) {
+		fmt.Printf("Received a movie! %+v\n", m)
 	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer sub.Unsubscribe()
 
-	// Unsubscribe
-	sub.Unsubscribe()
-
-	// Close connection
-	sc.Close()
-	// nc, err := nats.Connect("demo.nats.io", nats.Name("API PublishBytes Example"))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer nc.Close()
-
-	// if err := nc.Publish("updates", []byte("All is Well")); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Print("MEssage sent")
-
-	// wg := sync.WaitGroup{}
-	// wg.Add(1)
-
-	// // Subscribe
-	// if _, err := nc.Subscribe("updates", func(m *nats.Msg) {
-	// 	fmt.Println(m.Data)
-	// 	wg.Done()
-	// }); err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// // Wait for a message to come in
-	// wg.Wait()
+	for {
+		movie := &Movie{Rating: "3.3", Title: "Breaking bad", Year: 2019}
+		if err := c.Publish("movies", movie); err != nil {
+			log.Fatalln(err)
+		}
+		time.Sleep(time.Millisecond * 1000)
+	}
 
 }
