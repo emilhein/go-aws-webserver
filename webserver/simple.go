@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func Simple(w http.ResponseWriter, r *http.Request) {
+func simple(w http.ResponseWriter, r *http.Request) {
 	someMap := map[string]int{"Food": 1, "music": 2}
 	printKeysAndValues(someMap)
 

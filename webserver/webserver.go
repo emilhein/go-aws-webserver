@@ -22,7 +22,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// Define our message object
+//Event  Define our message object
 type Event struct {
 	Type      string `json:"type"`
 	Timestamp string `json:"timestamp"`
@@ -78,30 +78,31 @@ func handleMessages() {
 	}
 }
 
+// Start function
 func Start() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
-	r.HandleFunc("/simple", Simple)
-	r.HandleFunc("/getS3files", GetS3Files).Methods("POST")
-	r.HandleFunc("/interfaces", InterfaceMethod)
-	r.HandleFunc("/startmining", StartMining)
-	r.HandleFunc("/startNat", NATStart)
+	r.HandleFunc("/simple", simple)
+	r.HandleFunc("/getS3files", getS3Files).Methods("POST")
+	r.HandleFunc("/interfaces", interfaceMethod)
+	r.HandleFunc("/startmining", startMining)
+	r.HandleFunc("/subscribe", subscribe)
 	fmt.Printf("Server started.... \n")
-	err := http.ListenAndServe(GetPort(), r)
+	err := http.ListenAndServe(getPort(), r)
 	if err != nil {
 		fmt.Printf("Could not start the server: %v", err)
 	}
 
 }
 
-func GetPort() string {
+func getPort() string {
 	var port = os.Getenv("PORT")
 	// Set a default port if there is nothing in the environment
 	if port == "" {
-		port = "4747"
+		port = "3001"
 		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
 	}
 	return ":" + port

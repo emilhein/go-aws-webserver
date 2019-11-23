@@ -1,45 +1,48 @@
 package webserver
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-	"time"
 
-	"github.com/nats-io/nats.go"
+	stan "github.com/nats-io/stan.go"
 )
 
-func NATStart(w http.ResponseWriter, r *http.Request) {
-	// sc, err := stan.Connect(
-	// 	nats.DefaultURL
-	// 	"test-cluster",
-	// 	"client-1",
-	// 	stan.Pings(1, 3),
-	// stan.NatsURL(strings.Join(os.Args[1:], ",")),
-	// )
-	nc, err := nats.Connect(nats.DefaultURL)
+func subscribe(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("We Start")
+	getLast := make(chan uint64, 1)
+	doneChannel := make(chan bool, 1)
+
+	sc, err := stan.Connect("test-cluster", "clientID")
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Print(err)
 	}
 
-	c, _ := nats.NewEncodedConn(nc, "json")
+	// Simple Async Subscriber
+	sub, _ := sc.Subscribe("animals", func(m *stan.Msg) {
+		fmt.Printf("Received newest: %s \n", string(m.Data))
+		getLast <- m.Sequence
+	}, stan.StartWithLastReceived())
 
-	defer c.Close()
+	lastSequenseNum := <-getLast
 
-	sub, err := c.Subscribe("movies", func(m *Movie) {
-		fmt.Printf("Received a movie! %+v\n", m)
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer sub.Unsubscribe()
+	accumulator := make(map[uint64]string)
 
-	for {
-		movie := &Movie{Rating: "3.3", Title: "Breaking bad", Year: 2019}
-		if err := c.Publish("movies", movie); err != nil {
-			log.Fatalln(err)
+	sc.Subscribe("animals", func(m *stan.Msg) {
+		accumulator[m.Sequence] = string(m.Data)
+		if m.Sequence == lastSequenseNum {
+			doneChannel <- true
 		}
-		time.Sleep(time.Millisecond * 1000)
-	}
+	}, stan.DeliverAllAvailable())
+
+	<-doneChannel
+	fmt.Println("We Done")
+
+	// Unsubscribe
+	sub.Unsubscribe()
+
+	// Close connection
+	sc.Close()
+	json.NewEncoder(w).Encode(accumulator)
 
 }

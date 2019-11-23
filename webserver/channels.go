@@ -10,6 +10,7 @@ import (
 
 var wg sync.WaitGroup
 
+// MineShipment list
 type MineShipment struct {
 	Items []string
 }
@@ -56,7 +57,7 @@ func packer(shippingChannel <-chan string, doneChannel chan<- MineShipment) {
 	doneChannel <- container
 }
 
-func StartMining(w http.ResponseWriter, r *http.Request) {
+func startMining(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	wg.Add(3)

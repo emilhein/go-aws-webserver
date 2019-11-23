@@ -5,12 +5,14 @@ import (
 	"net/http"
 )
 
+// Movie struct
 type Movie struct {
 	Title  string `json:"title"`
 	Rating string `json:"rating"`
 	Year   int    `json:"year"`
 }
 
+// Cinema interface
 type Cinema interface {
 	getMovies() string
 }
@@ -23,13 +25,13 @@ func (m Movie) getMovies() string {
 	return fmt.Sprintf("The movie %s (%v) has a rating of %s", m.Title, m.Year, m.Rating)
 }
 
-func PrintMoviesInCinema(cinema Cinema) string {
+func printMoviesInCinema(cinema Cinema) string {
 	return cinema.getMovies()
 }
 
-func InterfaceMethod(w http.ResponseWriter, r *http.Request) {
+func interfaceMethod(w http.ResponseWriter, r *http.Request) {
 	myCinema := Movie{Title: "Batman", Rating: "8.8", Year: 2017}
-	logForCiname := PrintMoviesInCinema(myCinema)
+	logForCiname := printMoviesInCinema(myCinema)
 	fmt.Fprintf(w, "Interfaces used: %s", logForCiname)
 
 }

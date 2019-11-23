@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/emilhein/go-aws-webserver.svg?branch=master)](https://travis-ci.org/emilhein/go-aws-webserver)
 
-
 Example [here](https://github.com/emilhein/go-heroku-server)
+
 # go-aws-webserver
 
 A small webserver written in Go, to perform simple tasks on your AWS ressources
@@ -40,5 +40,12 @@ A POST body request in postman could look like this:
 	"bucket" : "YOUR_BUCKET",
 	"filepaths" : ["json_file_1", "json_file_2"]
 }
+
+```
+
+### Docker
+
+```
+docker run -p 4747:4747 go-docker-image
 
 ```

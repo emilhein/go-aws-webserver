@@ -9,6 +9,7 @@ import (
 	"github.com/emilhein/go-aws-utility/util/services"
 )
 
+// Input tpo the file retriever
 type Input struct {
 	Bucket    string   `json:"bucket"`
 	Filepaths []string `json:"filepaths"`
@@ -19,7 +20,7 @@ Takes JSON input "Bucket" & "Filepaths"
 
 
 */
-func GetS3Files(w http.ResponseWriter, r *http.Request) {
+func getS3Files(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	var input Input
